@@ -14,6 +14,7 @@ import {
   Settings,
   X,
   BookOpen,
+  MapPin,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PropsWithChildren, useState } from 'react';
@@ -37,6 +38,7 @@ const SIDEBAR_ITEMS: SidebarCategory[] = [
       { href: '/dashboard', icon: Home, text: 'Dashboard' },
       { href: '/hotspot', icon: Map, text: 'Hotspot Map' },
       { href: '/applications', icon: Cat, text: 'Applications' },
+      { href: '/report/upload', icon: MapPin, text: 'Report Stray' },
     ],
   },
   {
