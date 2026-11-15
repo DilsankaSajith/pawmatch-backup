@@ -36,18 +36,32 @@ import { createPetProfile } from '@/app/dashboard/actions';
 import { PET_FORMAT } from '@/app/api/struct-data/types';
 
 const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters'),
   age: z
     .string()
-    .min(1, 'Age must be a positive number')
-    .max(3, 'Age must be realistic'),
-  breed: z.string().min(1, 'Breed is required'),
+    .min(1, 'Age is required')
+    .refine((val) => !isNaN(Number(val)) && Number.isInteger(Number(val)), {
+      message: 'Age must be a whole number',
+    })
+    .refine((val) => Number(val) >= 0, {
+      message: 'Age cannot be negative',
+    })
+    .refine((val) => Number(val) <= 100, {
+      message: 'Age must be realistic (0–100)',
+    }),
+  breed: z
+    .string()
+    .min(1, 'Breed is required')
+    .regex(/^[a-zA-Z\s]+$/, 'Breed can only contain letters'),
   address: z.string().min(1, 'Address is required'),
   lastVaccinatedDate: z.string().optional(),
   description: z
     .string()
-    .min(1, 'Add a little description about your fury friend ')
-    .max(500, 'Description must be less than 500 characters'),
+    .min(1, 'Add a little description about your furry friend')
+    .max(1000, 'Description cannot exceed 1000 characters'),
   latitude: z.string().optional(),
   longitude: z.string().optional(),
 });

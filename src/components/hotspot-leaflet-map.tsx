@@ -1,6 +1,13 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  CircleMarker,
+  useMap,
+} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@/lib/leaflet-icon';
 import L from 'leaflet';
@@ -47,10 +54,25 @@ type HotspotLeafletMapProps = {
 };
 
 // --- Urgency helpers ---
-const urgencyConfig: Record<string, { color: string; bg: string; ring: string }> = {
-  Low: { color: 'text-emerald-700', bg: 'bg-emerald-50', ring: 'ring-emerald-200' },
-  Medium: { color: 'text-amber-700', bg: 'bg-amber-50', ring: 'ring-amber-200' },
-  High: { color: 'text-orange-700', bg: 'bg-orange-50', ring: 'ring-orange-200' },
+const urgencyConfig: Record<
+  string,
+  { color: string; bg: string; ring: string }
+> = {
+  Low: {
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-50',
+    ring: 'ring-emerald-200',
+  },
+  Medium: {
+    color: 'text-amber-700',
+    bg: 'bg-amber-50',
+    ring: 'ring-amber-200',
+  },
+  High: {
+    color: 'text-orange-700',
+    bg: 'bg-orange-50',
+    ring: 'ring-orange-200',
+  },
   Urgent: { color: 'text-red-700', bg: 'bg-red-50', ring: 'ring-red-200' },
 };
 
@@ -91,7 +113,8 @@ function HeatmapLayer({ reports }: { reports: ReportWithLocation[] }) {
 
     // Simple grid-based clustering
     const gridSize = 0.005; // ~500m cells
-    const grid: Record<string, { lat: number; lng: number; count: number }> = {};
+    const grid: Record<string, { lat: number; lng: number; count: number }> =
+      {};
 
     located.forEach((r) => {
       const lat = r.location!.latitude;
@@ -158,7 +181,10 @@ function FitBounds({ reports }: { reports: ReportWithLocation[] }) {
     if (located.length === 0) return;
 
     const bounds = L.latLngBounds(
-      located.map((r) => [r.location!.latitude, r.location!.longitude] as [number, number])
+      located.map(
+        (r) =>
+          [r.location!.latitude, r.location!.longitude] as [number, number],
+      ),
     );
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
   }, [reports, map]);
@@ -182,9 +208,13 @@ const HotspotLeafletMap = ({ reports }: HotspotLeafletMapProps) => {
   const locatedReports = reports.filter((r) => r.location);
 
   // Default center: first report or fallback
-  const defaultCenter: [number, number] = locatedReports.length > 0
-    ? [locatedReports[0].location!.latitude, locatedReports[0].location!.longitude]
-    : [6.9271, 79.8612]; // Colombo fallback
+  const defaultCenter: [number, number] =
+    locatedReports.length > 0
+      ? [
+          locatedReports[0].location!.latitude,
+          locatedReports[0].location!.longitude,
+        ]
+      : [6.9271, 79.8612]; // Colombo fallback
 
   return (
     <MapContainer
@@ -195,8 +225,8 @@ const HotspotLeafletMap = ({ reports }: HotspotLeafletMapProps) => {
       style={{ background: '#f1f5f9' }}
     >
       <TileLayer
-        attribution="&copy; <a href='https://carto.com/'>CARTO</a>"
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
       {/* Heatmap overlay */}
@@ -245,7 +275,8 @@ const HotspotLeafletMap = ({ reports }: HotspotLeafletMapProps) => {
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200">
                     <Hash className="h-3 w-3" />
-                    {report.animalCount} {report.animalCount === 1 ? 'animal' : 'animals'}
+                    {report.animalCount}{' '}
+                    {report.animalCount === 1 ? 'animal' : 'animals'}
                   </span>
                 </div>
 
@@ -272,7 +303,8 @@ const HotspotLeafletMap = ({ reports }: HotspotLeafletMapProps) => {
                 <div className="mt-2.5 pt-2 border-t border-slate-100">
                   <p className="text-[10px] text-slate-400 flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {report.location!.latitude.toFixed(4)}, {report.location!.longitude.toFixed(4)}
+                    {report.location!.latitude.toFixed(4)},{' '}
+                    {report.location!.longitude.toFixed(4)}
                   </p>
                 </div>
               </div>

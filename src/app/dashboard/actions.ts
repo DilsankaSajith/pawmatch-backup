@@ -8,6 +8,48 @@ import {
 import prisma from '@/lib/db';
 import { EmbeddingService } from '@/lib/embedding-service';
 import { auth } from '@clerk/nextjs/server';
+import z from 'zod';
+
+// Server-side validation schema
+const CreatePetInputSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters'),
+  age: z
+    .string()
+    .min(1, 'Age is required')
+    .refine((val) => !isNaN(Number(val)) && Number.isInteger(Number(val)), {
+      message: 'Age must be a whole number',
+    })
+    .refine((val) => Number(val) >= 0, {
+      message: 'Age cannot be negative',
+    })
+    .refine((val) => Number(val) <= 100, {
+      message: 'Age must be realistic (0–100)',
+    }),
+  breed: z
+    .string()
+    .min(1, 'Breed is required')
+    .regex(/^[a-zA-Z\s]+$/, 'Breed can only contain letters'),
+  gender: z.string(),
+  address: z.string().min(1, 'Address is required'),
+  animalType: z.string(),
+  description: z
+    .string()
+    .min(1, 'Description is required')
+    .max(1000, 'Description cannot exceed 1000 characters'),
+  healthCondition: z.string(),
+  adoptionStatus: z.string(),
+  imageUrl: z.string(),
+  lastVaccinatedDate: z.string().optional(),
+  location: z
+    .object({
+      latitude: z.string(),
+      longitude: z.string(),
+    })
+    .optional(),
+});
 
 export interface CreatePetInput {
   name: string;
@@ -28,6 +70,13 @@ export interface CreatePetInput {
 }
 
 export async function createPetProfile(input: CreatePetInput) {
+  // Validate input server-side
+  const validation = CreatePetInputSchema.safeParse(input);
+  if (!validation.success) {
+    const firstError = validation.error.errors[0]?.message || 'Invalid input';
+    throw new Error(firstError);
+  }
+
   const { userId } = await auth();
 
   if (!userId) {

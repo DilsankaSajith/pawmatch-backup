@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useMutation } from '@tanstack/react-query';
 import { postReport } from './actions';
 import { toast } from 'sonner';
+import { getFormattedDateTime } from '@/lib/helpers';
 
 interface AnalysisReportProps {
   analysis: AnalysisResult;
@@ -35,6 +36,8 @@ const AnalysisReport = ({ analysis }: AnalysisReportProps) => {
   const { mutate: server_postReport, isPending } = useMutation({
     mutationFn: postReport,
   });
+
+  const currentDate = getFormattedDateTime();
 
   return (
     <MaxWidthWrapper>
@@ -128,7 +131,7 @@ const AnalysisReport = ({ analysis }: AnalysisReportProps) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <span>📅 Feb 6, 2026 - 8.00 A.M</span>
+                <span>{currentDate}</span>
                 <Label>Description</Label>
                 <Textarea
                   value={editedAnalysis.description}
