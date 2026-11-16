@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Pet } from '@/types';
 import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
 
 interface RecommendedPetCardProps {
   pet: Pet;
@@ -64,6 +65,8 @@ function RecommendedPetCard({ pet, matchScore }: RecommendedPetCardProps) {
   const statusStyle = adoptionStatusConfig[adoptionStatus];
   const healthStyle = healthConfig[healthCondition];
 
+  const router = useRouter();
+
   return (
     <div className="group relative flex items-stretch overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:border-brand-100">
       {/* Gradient accent bar — left edge */}
@@ -83,17 +86,13 @@ function RecommendedPetCard({ pet, matchScore }: RecommendedPetCardProps) {
             <PawPrint className="size-8 text-brand-300" />
           </div>
         )}
-
-
       </div>
 
       {/* ── Content ── */}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5 px-4 py-3">
         {/* Row 1: Name, breed, match score, status */}
         <div className="flex items-center gap-2">
-          <h3 className="truncate text-sm font-bold text-slate-900">
-            {name}
-          </h3>
+          <h3 className="truncate text-sm font-bold text-slate-900">{name}</h3>
           <span className="hidden text-slate-300 sm:inline">·</span>
           <p className="hidden truncate text-xs text-brand-600 sm:block">
             {breed}
@@ -173,7 +172,11 @@ function RecommendedPetCard({ pet, matchScore }: RecommendedPetCardProps) {
 
       {/* ── Adopt Button ── */}
       <div className="flex shrink-0 items-center border-l border-slate-50 px-3 sm:px-4">
-        <Button size="sm" className="gap-1.5 rounded-lg text-xs">
+        <Button
+          size="sm"
+          className="gap-1.5 rounded-lg text-xs"
+          onClick={() => router.push(`/pet/${pet.id}`)}
+        >
           Adopt
         </Button>
       </div>

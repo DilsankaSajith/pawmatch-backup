@@ -1,8 +1,11 @@
+'use client';
+
 import Image from 'next/image';
-import { MapPin, Heart, Activity } from 'lucide-react';
+import { MapPin, Heart, Activity, Building2 } from 'lucide-react';
 import { Pet } from '@/types';
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 
 interface PetCardProps {
   pet: Pet;
@@ -23,9 +26,35 @@ const healthConditionStyles: Record<Pet['healthCondition'], string> = {
 function PetCard({ pet }: PetCardProps) {
   const { name, breed, adoptionStatus, imageUrl, healthCondition, address } =
     pet;
+  const { user } = useUser();
+
+  const isOwnPet =
+    user?.emailAddresses?.[0].emailAddress === pet.addedBy?.email;
+  const isShelterPet = pet.addedBy?.role === 'Shelter_Admin';
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-white shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-slate-100 max-w-xs w-full">
+    <div
+      className={`group relative flex flex-col rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden max-w-xs w-full ${
+        isOwnPet
+          ? 'border border-brand-200 bg-white'
+          : 'border border-slate-100 bg-white'
+      }`}
+    >
+      {/* Brand gradient overlay for current user's pets */}
+      {isOwnPet && (
+        <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-gradient-to-t from-brand-100/50 via-brand-50/20 to-transparent" />
+      )}
+
+      {/* Shelter tag */}
+      {isShelterPet && !isOwnPet && (
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur-sm px-2.5 py-1 shadow-sm border border-slate-200">
+          <Building2 className="h-3 w-3 text-slate-500" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+            Shelter
+          </span>
+        </div>
+      )}
+
       {/* Image */}
       <div className="relative h-52 w-full overflow-hidden bg-slate-100">
         {imageUrl ? (
